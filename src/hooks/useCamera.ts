@@ -6,7 +6,7 @@ export interface UseCameraResult {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
   isStreaming: boolean;
   error: string | null;
-  captureImage: () => File | null;
+  captureImage: () => Promise<File | null>;
   stopCamera: () => void;
 }
 
@@ -92,7 +92,7 @@ export function useCamera(): UseCameraResult {
   };
 
   // 画像をキャプチャ
-  const captureImage = (): File | null => {
+  const captureImage = async (): Promise<File | null> => {
     if (!videoRef.current || !canvasRef.current) {
       console.error('❌ Video or canvas ref is not available');
       return null;
@@ -146,7 +146,7 @@ export function useCamera(): UseCameraResult {
         'image/jpeg',
         0.85 // JPEG品質（0.0-1.0）
       );
-    }) as unknown as File | null; // Promiseを同期的に扱うためのキャスト（実際は非同期）
+    });
   };
 
   return {

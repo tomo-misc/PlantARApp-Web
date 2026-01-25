@@ -39,7 +39,7 @@ export default function CameraView({
 
     try {
       // 画像をキャプチャ
-      const imageFile = captureImage();
+      const imageFile = await captureImage();
 
       if (!imageFile) {
         throw new Error('画像のキャプチャに失敗しました');
