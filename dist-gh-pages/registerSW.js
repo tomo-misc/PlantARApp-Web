@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/PlantARApp-Web/sw.js', { scope: '/PlantARApp-Web/' })})}
