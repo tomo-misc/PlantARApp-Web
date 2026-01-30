@@ -34,7 +34,7 @@ export default function SettingsView({
   const confidencePercent = (minimumConfidence * 100).toFixed(0);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900">
+    <div className="flex flex-col h-full bg-gray-900">
       {/* ヘッダー */}
       <div className="bg-gray-800 p-4 flex items-center justify-between border-b border-gray-700">
         <h1 className="text-xl font-bold text-white">設定</h1>

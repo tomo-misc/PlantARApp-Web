@@ -78,88 +78,86 @@ export default function CameraView({
     setResult(null);
     setErrorMessage(null);
   };
-
-  // カメラエラー表示
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-900">
-        <div className="text-center p-8">
-          <div className="text-6xl mb-4">📷</div>
-          <h2 className="text-xl font-bold text-white mb-2">カメラエラー</h2>
-          <p className="text-gray-400 whitespace-pre-line">{error}</p>
-        </div>
-      </div>
-    );
-  }
-
-  // 結果表示中
-  if (result) {
-    return (
-      <div className="flex flex-col h-screen bg-gray-900">
-        <PlantInfoCard
-          result={result}
-          showThumbnail={showThumbnail}
-          onRetry={handleRetry}
-        />
-      </div>
-    );
-  }
-
-  // カメラビュー
-  return (
-    <div className="relative flex flex-col h-screen bg-black">
-      {/* ビデオプレビュー */}
-      <div className="flex-1 relative overflow-hidden">
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          muted
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-
-        {/* 隠しキャンバス（画像キャプチャ用） */}
-        <canvas ref={canvasRef} className="hidden" />
-
-        {/* ガイドフレーム */}
-        {isStreaming && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-64 h-64 border-4 border-white border-opacity-50 rounded-lg"></div>
-          </div>
-        )}
-
-        {/* 処理中オーバーレイ */}
-        {isIdentifying && (
-          <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500 mx-auto mb-4"></div>
-              <p className="text-white text-lg">植物を認識中...</p>
+  
+return (
+    <div className="fixed inset-0 bg-black">
+      {/* カメラビュー（常にレンダリング、結果表示中は非表示） */}
+      <div className={`relative flex flex-col h-full ${result || error ? 'hidden' : ''}`}>
+        {/* カメラエラー表示 */}
+        {error && !result && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-900 z-50">
+            <div className="text-center p-8">
+              <div className="text-6xl mb-4">📷</div>
+              <h2 className="text-xl font-bold text-white mb-2">カメラエラー</h2>
+              <p className="text-gray-400 whitespace-pre-line">{error}</p>
             </div>
           </div>
         )}
 
-        {/* エラーメッセージ */}
-        {errorMessage && (
-          <div className="absolute top-4 left-4 right-4 bg-red-500 bg-opacity-90 p-4 rounded-lg">
-            <p className="text-white text-center whitespace-pre-line">{errorMessage}</p>
-          </div>
-        )}
+        {/* ビデオプレビュー */}
+        <div className="flex-1 relative overflow-hidden">
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+
+          {/* 隠しキャンバス（画像キャプチャ用） */}
+          <canvas ref={canvasRef} className="hidden" />
+
+          {/* ガイドフレーム */}
+          {isStreaming && !isIdentifying && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-64 h-64 border-4 border-white border-opacity-50 rounded-lg"></div>
+            </div>
+          )}
+
+          {/* 処理中オーバーレイ */}
+          {isIdentifying && (
+            <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500 mx-auto mb-4"></div>
+                <p className="text-white text-lg">植物を認識中...</p>
+              </div>
+            </div>
+          )}
+
+          {/* エラーメッセージ */}
+          {errorMessage && (
+            <div className="absolute top-4 left-4 right-4 bg-red-500 bg-opacity-90 p-4 rounded-lg z-10">
+              <p className="text-white text-center whitespace-pre-line">{errorMessage}</p>
+            </div>
+          )}
+        </div>
+
+        {/* シャッターボタン */}
+        <div className="flex items-center justify-center p-8 bg-gray-900">
+          <button
+            onClick={handleCapture}
+            disabled={!isStreaming || isIdentifying}
+            className={`w-20 h-20 rounded-full border-4 border-white flex items-center justify-center transition-all ${
+              isStreaming && !isIdentifying
+                ? 'bg-white hover:scale-110 active:scale-95'
+                : 'bg-gray-600 opacity-50 cursor-not-allowed'
+            }`}
+          >
+            <div className="w-16 h-16 rounded-full bg-white"></div>
+          </button>
+        </div>
       </div>
 
-      {/* シャッターボタン */}
-      <div className="flex items-center justify-center p-8 bg-gray-900">
-        <button
-          onClick={handleCapture}
-          disabled={!isStreaming || isIdentifying}
-          className={`w-20 h-20 rounded-full border-4 border-white flex items-center justify-center transition-all ${
-            isStreaming && !isIdentifying
-              ? 'bg-white hover:scale-110 active:scale-95'
-              : 'bg-gray-600 opacity-50 cursor-not-allowed'
-          }`}
-        >
-          <div className="w-16 h-16 rounded-full bg-white"></div>
-        </button>
-      </div>
+      {/* 結果表示 */}
+      {result && (
+        <div className="absolute inset-0 flex flex-col bg-gray-900">
+          <PlantInfoCard
+            result={result}
+            showThumbnail={showThumbnail}
+            onRetry={handleRetry}
+          />
+        </div>
+      )}
     </div>
   );
 }

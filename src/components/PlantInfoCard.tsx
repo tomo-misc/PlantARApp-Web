@@ -22,7 +22,7 @@ export default function PlantInfoCard({
   });
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900">
+    <div className="flex flex-col h-full bg-gray-900">
       {/* ヘッダー */}
       <div className="bg-green-600 p-4 text-white">
         <h1 className="text-2xl font-bold text-center">植物認識結果</h1>

@@ -59,7 +59,7 @@ function App() {
   };
 
   return (
-    <div className="h-screen bg-gray-900">
+    <div className="fixed inset-0 bg-gray-900">
       {/* 設定画面 */}
       {showSettings ? (
         <SettingsView
